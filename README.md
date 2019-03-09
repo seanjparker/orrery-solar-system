@@ -1,7 +1,7 @@
 # Orrery
 ## A simulation of the inner planets written in C and OpenGL
 
-![The spaceship view from the simulation]()
+![The spaceship view from the simulation](https://github.com/seanjparker/orrery-solar-system/blob/master/solar-system.png?raw=true)
 
 ## Compilation
 Use the following scripts to compile the `orrery.c` file depending on your OS:
