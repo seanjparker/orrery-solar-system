@@ -31,7 +31,7 @@ Author:     Sean Parker
 #define PI 3.141593
 #define DEG_TO_RAD 0.01745329
 #define ORBIT_POLY_SIDES 50
-#define TIME_STEP 0.01 /* days per frame */
+#define TIME_STEP 0.25 /* days per frame */
 #define EARTH 3
 #define TURN_ANGLE 4.0
 #define RUN_SPEED  10000000
@@ -342,9 +342,10 @@ void drawOrbit(int n)
   float theta = 0.0;
   float moveAngle = 2 * PI / (float) ORBIT_POLY_SIDES;
   float x, z;
-  glColor3f(1.0, 1.0, 1.0);
+  glColor3f(bodies[n].r, bodies[n].g, bodies[n].b);
   glBegin(GL_LINE_LOOP);
-  for (int i = 0; i < ORBIT_POLY_SIDES; i++)
+  int i;
+  for (i = 0; i < ORBIT_POLY_SIDES; i++)
   {
     x = cos(theta) * planet.orbital_radius;
     z = sin(theta) * planet.orbital_radius;
@@ -353,6 +354,7 @@ void drawOrbit(int n)
     theta += moveAngle;
   }
   glEnd();
+  glColor3f(1.0, 1.0, 1.0);
 }
 
 /*****************************/
@@ -371,19 +373,22 @@ void drawBody(int n)
   float parentPlanetOrbit = bodies[planet->orbits_body].orbit * DEG_TO_RAD;
 
   // Draws body "n"
-  GLint sl = 9;
-  GLint st = 9;
+  GLint sl = 17;
+  GLint st = 13;
 
-  // Apply the transformations
-  glRotatef(planet->orbital_tilt, 0.0, 0.0, 1.0); //T_otilt
+  if (planet->orbits_body == 0) {
+    glRotatef(planet->orbital_tilt, 0.0, 0.0, 1.0); //T_otilt
+  } else {
+    glRotatef(bodies[planet->orbits_body].orbital_tilt, 0.0, 0.0, 1.0); //T_otilt
+  }
 
   // If a planet's parent is not the sun, then translate to the parent body
   if (planet->orbits_body != 0)
   {
     glTranslatef(
-        bodies[planet->orbits_body].orbital_radius * sin(parentPlanetOrbit),
-        0.0,
-        bodies[planet->orbits_body].orbital_radius * cos(parentPlanetOrbit));
+      bodies[planet->orbits_body].orbital_radius * sin(parentPlanetOrbit),
+      0.0,
+      bodies[planet->orbits_body].orbital_radius * cos(parentPlanetOrbit));
   }
 
   if (draw_orbits)
@@ -395,7 +400,7 @@ void drawBody(int n)
     drawLabel(n);
 
   glRotatef(planet->axis_tilt, 0.0, 0.0, -1.0);  //T_atilt
-  
+
   glRotatef(planet->spin, 0.0, 1.0, 0.0);       //T_spin
 
   glRotatef(90, 1.0, 0.0, 0.0);                 //T_vert
@@ -461,7 +466,7 @@ void keyboard(unsigned char key, int x, int y)
   switch (key)
   {
   case 114: // r, move up
-  eyey += RUN_SPEED;
+    eyey += RUN_SPEED;
     break;
   case 102: // f, move down
     eyey -= RUN_SPEED;
